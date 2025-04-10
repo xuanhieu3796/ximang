@@ -1,0 +1,19 @@
+{strip}
+	<div class="categories-image">
+	    {if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de'])}
+	        <div class="title-section text-left">
+	        	{$this->Block->getLocale('tieu_de', $data_extend)}
+	        </div>
+	    {/if}
+	    
+	    {if !empty($data_block.data)}
+	        <div class="list-category">
+	            <div class="row">
+	                {$this->element('../block/category_article/item_image', [
+    	            	'categories' => $data_block.data
+    	            ])}
+	            </div>
+	        </div>
+	    {/if}
+	</div>
+{/strip}

@@ -1,0 +1,40 @@
+{strip}
+{assign var = article_info value = []}
+{if !empty($data_block.data)}
+	{assign var = article_info value = $data_block.data}
+{/if}
+{assign var = all_images value = []}
+{if !empty($article_info.images)}
+	{assign var = all_images value = $article_info.images}
+{/if}
+{if !empty($article_info)}
+	<article class="article-detail-top">
+		{if !empty($article_info.name)}
+			<h1 class="title">
+				{$article_info.name|escape}
+			</h1>
+		{/if}
+        <div class="created-outh">
+            {if !empty($article_info.author_id)}
+                {assign var = author_info value = $this->Author->getDetailAuthor({$article_info.author_id}, {LANGUAGE})}
+                {if !empty($author_info.full_name)}
+                    <span class="by">
+                        By: <a href="/{if !empty($author_info.url)}{$author_info.url}{/if}">{$author_info.full_name}</a>
+                    </span>
+                {/if}
+            {/if}
+            {if !empty($article_info.author_id) || !empty($article_info.created)}
+                <span class="ths">
+                    
+                </span>
+            {/if}
+            {if !empty($article_info.created)}
+	            <span class="post-date">
+	            	Last updated: {$article_info.created}
+	        	</span>
+	        {/if}
+        </div>
+        
+	</article>
+	{/strip}
+{/if}

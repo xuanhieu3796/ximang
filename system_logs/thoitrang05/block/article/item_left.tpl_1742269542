@@ -1,0 +1,60 @@
+{strip}
+{assign var = ignore value = false}
+{if !empty($ignore_lazy)}
+    {assign var = ignore value = $ignore_lazy}
+{/if}
+<article class="article-item swiper-slide">
+    <div class="inner-image">
+        <div class="img ratio-16-9">
+            {if !empty($article.image_avatar)}
+                {assign var = url_img value = "{CDN_URL}{$this->Utilities->getThumbs($article.image_avatar, 500)}"}
+            {else}
+                {assign var = url_img value = "data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="}
+            {/if}
+        
+            <a href="{if !empty($article.url)}{$this->Utilities->checkInternalUrl($article.url)}{/if}" title="{if !empty($article.name)}{$article.name}{/if}">
+                {$this->LazyLoad->renderImage([
+                    'src' => $url_img, 
+                    'alt' => "{if !empty($article.name)}{$article.name}{/if}", 
+                    'class' => 'img-fluid',
+                    'ignore' => $ignore
+                ])}
+            </a>
+        </div>
+    </div>
+    <div class="inner-content">
+        {if !empty($article.categories)}
+            <span class="article-category ">
+                {foreach from = $article.categories item = category}
+                    {if !empty($category.name)}
+                        <a class="color-main mb-2 d-inline-block" href="{$this->Utilities->checkInternalUrl($category.url)}">
+                            {$category.name|escape|truncate:50:" ..."}
+                            {if !$category@last}
+                                <span class="pr-1">, </span>
+                            {/if}
+                        </a>
+                    {/if}
+                {/foreach}
+            </span>
+        {/if}
+        {if !empty($article.name)}   
+            <div class="article-title">
+                <a href="{$this->Utilities->checkInternalUrl($article.url)}" title="{if !empty($article.name)}{$article.name}{/if}">
+                    {$article.name|escape|truncate:70:" ..."}
+                </a>
+            </div>  
+        {/if}
+        {if !empty($article.description)}
+            <div class="article-description">
+                {$article.description|strip_tags|truncate:185:" ..."}
+            </div>
+        {/if}
+        {if !empty($article.created)}
+        	<div class="post-date">
+        		{$this->Utilities->convertIntgerToDateString($article.created)}
+        	</div>
+        {/if}
+    </div>  
+</article>
+
+{/strip}

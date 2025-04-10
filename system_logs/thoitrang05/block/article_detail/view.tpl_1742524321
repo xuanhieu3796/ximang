@@ -1,0 +1,105 @@
+{strip}
+{assign var = article_info value = []}
+{if !empty($data_block.data)}
+	{assign var = article_info value = $data_block.data}
+{/if}
+{assign var = all_images value = []}
+{if !empty($article_info.images)}
+	{assign var = all_images value = $article_info.images}
+{/if}
+{assign var = config_slider value = [
+	'navigation' => [
+		'nextEl' => '.swiper-button-next',
+		'prevEl' => '.swiper-button-prev'
+	]
+]}
+
+{assign var = config_slider_thumbs value = [
+	'spaceBetween'=> 10,
+    'slidesPerView'=> 4,
+    'freeMode'=> true,
+    'watchSlidesProgress'=> true
+]}
+{if !empty($article_info)}
+	<article class="article-detail">
+        <div class="row">
+            {if !empty($article_info.catalogue)}
+                <div class="col-12 col-md-3">
+                    <div class="sticky-top" nh-table-content="content"></div>
+                </div>
+            {/if}
+            
+            <div class="col-12 {if !empty($article_info.catalogue)}col-md-9{else}col-md-12{/if}">
+                {if !empty($article_info.content)}
+    			    <div class="article-content">
+    			    	{$this->LazyLoad->renderContent($article_info.content)}
+    			    </div>
+    		    {/if}
+    		    {* tag bài viết *}
+        		{if !empty($article_info.tags)}
+            		<div class="box-tags">
+                        <label class="mr-2">
+                            {__d('template', 'the_bai_viet')}: 
+                        </label>
+                        <ul class="tags list-unstyled mb-0">
+        			        {foreach from = $article_info.tags item = tag}
+        			        	{if !empty($tag.name)}
+        						    <li>
+        						        <a href="{if !empty($tag.url)}{TAG_PATH}/{$tag.url}{/if}" title="{$tag.name}">
+        						        	{$tag.name}{if !$tag@last},{/if}
+        						        </a>
+        						    </li>
+        						{/if}
+        			        {/foreach}
+        				</ul>
+            		</div>
+        		{/if}
+        		{* Chia sẻ mạng xã hội *}
+        	    {if !empty($article_info.url)}
+        	        {assign var = url_article value = "{$this->Utilities->getUrlWebsite()}{$this->Utilities->checkInternalUrl($article_info.url)}"}
+        	        <div class="social-share d-flex align-items-center flex-wrap mb-3">
+        	            <span class="share-title">
+        	                <label class="mb-0">
+        	                    {__d('template', 'chia_se')}:
+        	                </label>
+        	            </span>
+        
+        	            <div class="list-social">
+        	                <div class="btn-social">
+        	                    <a href="javascript:;" nh-link-redirect="https://www.facebook.com/sharer/sharer.php?u={$url_article}" nh-link-redirect-blank title="Facebook">
+        	                        <i class="fa-brands fa-facebook-f"></i>
+        	                    </a>
+        	                </div>
+        
+        	                <div class="btn-social">
+        	                    <a href="javascript:;" nh-link-redirect="https://twitter.com/share?url={$url_article}" nh-link-redirect-blank title="Twitter">
+        	                        <i class="fa-brands fa-twitter"></i>
+        	                    </a>
+        	                </div>
+        
+        	                <div class="btn-social">
+        	                    <a href="javascript:;" nh-link-redirect="https://plus.google.com/share?url={$url_article}" nh-link-redirect-blank title="Google+">
+        	                        <i class="fa-brands fa-google-plus-g"></i>
+        	                    </a>
+        	                </div>
+        
+        	                <div class="btn-social">
+        	                    <a href="javascript:;" nh-link-redirect="https://pinterest.com/pin/create/button/?url={$url_article}" nh-link-redirect-blank title="Pinterest">
+        	                        <i class="fa-brands fa-pinterest-p"></i>
+        	                    </a>
+        	                </div>
+        
+        	                <div class="btn-social">
+        	                    <a href="javascript:;" nh-link-redirect="https://www.linkedin.com/shareArticle?mini=true&amp;url={$url_article}" nh-link-redirect-blank title="LinkedIn">
+        	                        <i class="fa-brands fa-linkedin-in"></i>
+        	                    </a>
+        	                </div>
+        	            </div>
+        	        </div>
+        	    {/if}
+            </div>
+        </div>
+
+	</article>
+	{/strip}
+{/if}

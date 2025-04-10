@@ -1,0 +1,42 @@
+{strip}
+{if !empty($data_block)}
+	<div class="banner-right">
+	    {foreach from = $data_block item = slider}
+    		{assign var = image_source value = ''}
+			{if !empty($slider.image) && !empty($slider.image_source)}
+				{assign var = image_source value = $slider.image_source}
+			{/if}
+
+			{assign var = image_url value = ''}
+			{if !empty($slider.image) && $image_source == 'cdn'}
+				{assign var = image_url value = "{CDN_URL}{$slider.image}"}
+			{/if}
+
+			{if !empty($slider.image) && $image_source == 'template'}
+				{assign var = image_url value = "{$slider.image}"}
+			{/if}
+			
+			<div class="item">
+			    <div class="img ratio-16-9">
+			        <img src="{$image_url}" class="img-fluid" alt="{if !empty($slider.name)}{$slider.name}{/if}">
+			    </div>
+			    <div class="content">
+			        {if !empty($slider.name)}
+		        		<div class="name">
+		        			{$slider.name}
+		        		</div>
+	        		{/if}
+	        		{if !empty($slider.description)}
+	        			<div class="description">
+		        			<a class="swiper-slide--link" {if !empty($slider.url)}href="{$this->Utilities->checkInternalUrl($slider.url)}"{/if} title="{if !empty($slider.name)}{$slider.name}{/if}" {if !empty($slider.blank_link)}target="_blank"{/if}>
+		        			    {$slider.description}
+		        			</a>
+		        		</div>
+	        		{/if}
+			    </div>
+			</div>
+        {/foreach}
+	</div>
+{/if}
+
+{/strip}

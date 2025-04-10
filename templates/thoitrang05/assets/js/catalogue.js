@@ -1,0 +1,150 @@
+'use strict';
+
+var nhTableContent = {
+	warpTableNav: null,
+	warpTableFixed: null,
+	iconSidebar: null,
+	tableContent: null,
+	tableNav: null,
+	htmlTemplate: '\
+		<div class="table-content-section">\
+	    	<div class="box-table-nav">\
+				<div class="title-table-navigation">\
+					<b>'+nhMain.getLabel('muc_luc_noi_dung')+'</b>\
+					<span nh-table-content="expand" class="icon-expand"></span>\
+				</div>\
+				<nav nh-table-content="nav" class="collapse "></nav>\
+			</div>\
+		</div>',
+	init: function(){
+		var self = this;
+		
+		self.tableContent = '[nh-table-content="content"]';
+		if($(self.tableContent).length == 0) return false;
+		var headings = 'h1, h2, h3, h4, h5';
+
+		var makeIdsHeading = self.makeIdsHeading(self.tableContent, headings);
+		if($.isEmptyObject(makeIdsHeading)) return false;
+		
+		self.loadElement();
+
+		self.warpTableNav = $('.table-content-section');
+		self.warpTableFixed = '[nh-table-content="fixed"]';
+		self.iconSidebar = '[nh-table-content="icon"]';
+		self.tableNav = '[nh-table-content="nav"]';
+
+		
+		
+		
+		tocbot.init({
+			tocSelector: self.tableNav,
+			contentSelector: self.tableContent,
+			headingSelector: headings,
+			linkClass: 'table-link',
+			activeLinkClass: 'is-active-link',
+			listClass: 'table-content',
+			listItemClass: 'list-item',
+			activeListItemClass: 'is-active-li',
+			scrollSmoothOffset: -200,
+			headingsOffset: 200,
+			hasInnerContainers: true
+		});
+		
+		self.warpTableNav.on('click', self.iconSidebar, function(e) {
+			$(self.warpTableFixed).collapse('show');
+		});
+
+		self.warpTableNav.on('click', '[nh-table-content="expand"]', function(e) {
+			$(self.tableNav).collapse('toggle');
+		});
+
+		$(document).on('click', self.warpTableFixed + ' .title-table-navigation', function(e) {
+			$(self.warpTableFixed).collapse('hide');
+		});
+
+		$(document).on('click', 'body', function(e) {
+			if ((!$(e.target).is('.box-table-fixed *'))){
+				$(self.warpTableFixed).collapse('hide');
+			}
+		});
+
+		$(document).on('click', '.table-link', function(e) {
+			var anchor = $(this).attr('href');
+            if(anchor.length) {
+                $('html,body').animate({scrollTop: $(anchor).offset().top - 50}, 'slow');
+            }
+		});
+
+		var startPoint = $(self.tableContent).offset().top;
+
+		$(window).scroll(function(event){
+			var endPoint = startPoint + parseInt($(self.tableContent).css('height')) - 50;
+			var scrollTop = $(this).scrollTop();
+			if(scrollTop >= startPoint && scrollTop <= endPoint) {
+				$(self.iconSidebar).show();
+				self.appendElement();
+				$(self.warpTableFixed + '.box-table-nav .collapse').addClass('show');
+			} else {
+				$(self.iconSidebar).hide();
+				$(self.warpTableFixed).collapse('hide');
+			}
+		});
+		// scoll đến nội dung khi chia sẻ link
+		$(document).ready(function() {
+	    	if (window.location.hash) {
+	            var anchor = window.location.hash;
+	            if(anchor.length) {
+	                $('html,body').animate({scrollTop: $(anchor).offset().top - 50}, 'slow');
+	            }
+	        };
+		});
+	},
+	appendElement: function(){
+		var self = this;
+
+		var html = $('.box-table-nav').html();
+
+		if($(self.warpTableFixed).length > 0) {
+			$(self.warpTableFixed).html('');
+			$(self.warpTableFixed).append(html);
+		} else {
+			var htmlAppend = $('<div nh-table-content="fixed" class="box-table-fixed collapse">').append(html);
+			$('body').append(htmlAppend);
+		}
+	},
+	loadElement: function() {
+		var self = this;
+        if($('[nh-table-content="wrap"]').length > 0) {
+            $('[nh-table-content="wrap"]').append(self.htmlTemplate);
+            if(!nhMain.isMobile){
+            	$('[nh-table-content="wrap"] .collapse').addClass('show');
+            }
+        } else {
+            $(self.tableContent).before(self.htmlTemplate);
+        }
+	},
+	makeIdsHeading: function(wrapContent = null, heading = []) {
+		var self = this;
+
+		if(!nhMain.utilities.notEmpty(wrapContent) || !nhMain.utilities.notEmpty(heading)) return false;
+
+		var content = document.querySelector(wrapContent)
+		var headings = content.querySelectorAll(heading)
+		var headingMap = {}
+
+		Array.prototype.forEach.call(headings, function (heading) {
+		var id = heading.id ? heading.id : heading.textContent.trim().toLowerCase()
+		    .split(' ').join('-').replace(/[!@#$%^&*():]/ig, '').replace(/\//ig, '-')
+		    id = nhMain.utilities.noUnicode(id)
+		    headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
+		    if (headingMap[id]) {
+		      	heading.id = id + '-' + headingMap[id]
+		    } else {
+		      	heading.id = id
+		    }
+		})
+		return headingMap;
+	}
+}
+
+nhTableContent.init();

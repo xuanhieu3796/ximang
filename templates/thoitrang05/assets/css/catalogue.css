@@ -1,0 +1,191 @@
+.table-content {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+  }
+  .table-content .table-content {
+    /* list-style: lower-latin; */
+    }
+    .table-content .table-content .table-content {
+      list-style: disc; }
+
+.box-table-nav {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  }
+  .box-table-nav nav {
+    background-color: aliceblue;
+    background-color: #fff;
+    border-top: 1px solid #F5FAFF;
+    }
+    .box-table-nav nav > ol > li > a {
+      font-weight: 600; }
+    .box-table-nav nav > ol > li ol a.table-link {
+      font-size: 1.3rem; }
+
+.box-table-fixed nav {
+  padding: 1rem 1rem 1.5rem; }
+  .box-table-fixed nav > ol > li::marker {
+    font-weight: 600; }
+  .box-table-fixed nav > ol > li > a {
+    font-weight: 600; }
+  .box-table-fixed nav > ol > li ol a.table-link {
+    font-size: 1.3rem; }
+
+.title-table-navigation {padding: 1rem 1rem 0.7rem;margin-bottom: 0;border-radius: 0.5rem 0.5rem 0 0;position: relative;font-size: 18px;display: flex;align-items: center;font-weight: 700;color: #000;););););););););););background: #fff;}
+  .title-table-navigation i {
+    font-size: 2.6rem;
+    padding-right: 0.5rem;
+    vertical-align: top; }
+
+.box-table-fixed {
+  position: fixed;
+  top: 20%;
+  z-index: 9;
+  border: 1px solid #ddd;
+  border-radius: 5px 5px 0 0; }
+  .box-table-fixed nav {
+    width: 20rem;
+    padding: 1rem 1rem 1.5rem;
+    border-top: 1px solid #ddd;
+    background: #f8f8f8; }
+  .box-table-fixed .title-table-navigation {
+    cursor: pointer;
+    background-color: #fff; }
+  .box-table-fixed .icon-expand {
+    display: none; }
+
+.table-content-section {
+  margin-bottom: 3rem; }
+
+a.table-link {
+  height: 100%;
+  display: block;
+  padding: 0.2rem 0;
+  color: #666;
+  font-size: 1.3rem; }
+  a.table-link.is-active-link {
+    color: var(--color-highlight); }
+  a.table-link:hover {
+    color: var(--color-highlight); }
+
+.icon-expand {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer; }
+  .icon-expand::before {
+    content: '\f107';
+    font-family: "Font Awesome 6 Pro";
+    font-weight: 900; }
+
+li.is-active-li::marker {
+  }
+
+.table-content-icon {
+  position: fixed;
+  top: 20%;
+  right: calc(50% - 640px);
+  font-size: 2.4rem;
+  display: block;
+  line-height: 3.8rem;
+  text-align: center;
+  width: 3.8rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  color: #333;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  z-index: 9; }
+  .table-content-icon:hover {
+    background-color: #f8f8f8;
+    color: #333; }
+
+.table-content-icon {
+  right: calc(50% - 16rem); }
+
+.box-table-fixed {
+  right: calc(50% - 16rem); }
+
+nav[nh-table-content="nav"] > .table-content {
+  padding-top: 0;
+  padding-bottom: 0;
+  }
+
+@media (min-width: 576px) {
+  .table-content-icon {
+    right: calc(50% - 30rem); }
+  .box-table-fixed {
+    right: calc(50% - 30rem); } }
+
+@media (min-width: 768px) {
+  .table-content-icon {
+    right: calc(50% - 39.5rem); }
+  .box-table-fixed {
+    right: calc(50% - 39.5rem); } }
+
+@media (min-width: 992px) {
+  .table-content-icon {
+    right: calc(50% - 51.5rem); }
+  .box-table-fixed {
+    right: calc(50% - 51.5rem); } }
+
+@media (min-width: 1200px) {
+  .table-content-icon {
+    right: calc(50% - 64rem); }
+  .box-table-fixed {
+    right: calc(50% - 80rem); } }
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .box-table-fixed {
+    right: calc(50% - 62rem); }
+  .table-content-icon {
+    right: calc(50% - 62rem); } }
+article.article-detail .article-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+article.article-detail-top {
+    margin-bottom: 25px;
+}
+.table-content li.list-item {
+    position: relative;
+}
+.table-content > li {
+    counter-increment: capitolo;
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+}
+ol.table-content li.list-item .node-name--H3 {
+    padding-left: 22px;
+}
+.box-table-nav nav > ol > li ol a.table-link {
+    font-size: 1.3rem;
+}
+.table-content li.list-item>a {
+    padding: 10px 5px 10px 15px;
+    display: flex;
+}
+.table-content > li>a:before {
+    content: counter(capitolo) '.';
+    margin-right: 5px;
+}
+.table-content > li > ol > li>a:before {
+  content: counter(capitolo) '.' counter(paragrafo) '.';
+}
+
+.table-content > li > ol {
+    counter-reset: paragrafo;
+}
+.table-content > li > ol > li {
+    counter-increment: paragrafo;
+    font-size: 16px;
+}
+li.list-item.is-active-li .is-active-link , li.list-item a:hover {
+    background: #f4fff5;
+}
