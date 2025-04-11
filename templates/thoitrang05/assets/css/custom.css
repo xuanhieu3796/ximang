@@ -22,23 +22,13 @@
     .menu-section .entry-menu.dropdown {
         border-radius: 8px;
     }
-    .menu-container {
+    .menu-section>ul {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
     }
     .menu-section > ul > li {
-        margin-left: 2.5rem;
-        margin-right: 2.5rem;
-    }
-    .header-menu > .container > .row > div:nth-child(1),
-    .header-menu > .container > .row > div:nth-child(3) {
-        flex: 0 0 250px;
-        max-width: 250px;
-    }
-
-    .header-menu > .container > .row > div:nth-child(2) {
-        flex-basis: calc(100% - 500px);
-        max-width: calc(100% - 500px);
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
     }
 }
 .header-top > .container > .row > div:nth-child(3) {
@@ -73,7 +63,7 @@
 
 @media (min-width: 1350px) {
     header .container {
-        max-width: calc(100% - 250px);
+        /* max-width: calc(100% - 250px); */
     }
     .container {
         max-width: 1350px;
@@ -170,7 +160,7 @@
 }
 
 .banner-right {
-    margin-top: 64px;
+    /* margin-top: 64px; */
 }
 
 .banner-right .item {
@@ -209,7 +199,7 @@
 }
 
 .banner-right .item .img {
-    padding-top: 39.25%;
+    padding-top: 40.25%;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -727,11 +717,11 @@ footer {
 
 .item-img-brand .img-brand img {
     object-fit: contain;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 .item-img-brand .img-brand {
-    padding-top: 35.25%;
+    padding-top: 50.25%;
     background: #fff;
     border-radius: 8px;
 }
@@ -1362,4 +1352,43 @@ form.box-suggest .input-group .form-control {
     .box-article-hot .article-right .list-article .article-item-small {
         margin-bottom: 10px;
     }
+}
+
+.header-top {
+    background: #ffffff;
+}
+.header-top>.container>.row>div:nth-child(1) {
+    flex: 0 0 515px;
+    max-width: 515px;
+    display: flex;
+    align-items: center;
+    /* margin-top: -27px; */
+}
+.header-top>.container>.row>div:nth-child(2) {
+    flex-basis: calc(100% - 830px);
+    max-width: calc(100% - 830px);
+}
+.header-top>.container>.row>div:nth-child(3) {
+    flex: 0 0 315px;
+    max-width: 315px;
+}
+.title-website .title {
+    font-size: 40px;
+    color: #0d5ba6;
+    font-weight: 900;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+.title-website .dsc {
+    font-size: 19px;
+    margin-bottom: 10px;
+    color: #00aa54;
+    font-style: italic;
+    line-height: 1.2;
+}
+.title-website {
+    margin-left: 10px;
+}
+.box-contact-inbox .inter-image img {
+    object-fit: contain;
 }

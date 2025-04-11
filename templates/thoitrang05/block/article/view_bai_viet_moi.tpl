@@ -41,18 +41,20 @@
                 <div class="article-right">
                     <div class="list-article">
                         {foreach from = $data_block.data item = article}
-                            {if $article@index gte 1 && $article@index lte 4 }
+                            {if $article@index gte 1 && $article@index lte 5 }
                                 {$this->element("../block/{$block_type}/item_small", [
                                     'article' => $article
                                 ])}
                             {/if}
                         {/foreach}
                     </div>
-                    <div class="link-article">
-                        <a href="{if !empty($data_extend['locale'][{LANGUAGE}]['link'])}{$this->Block->getLocale('link', $data_extend)}{/if}" title="{if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de'])}{$this->Block->getLocale('tieu_de', $data_extend)}{/if}">
-                            {if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de_link'])}{$this->Block->getLocale('tieu_de_link', $data_extend)}{/if} <i class="fa-light fa-arrow-right"></i>
-                        </a>
-                    </div>
+                    {if !empty($data_extend['locale'][{LANGUAGE}]['link'])}
+                        <div class="link-article">
+                            <a href="{$this->Block->getLocale('link', $data_extend)}" title="{if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de'])}{$this->Block->getLocale('tieu_de', $data_extend)}{/if}">
+                                {if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de_link'])}{$this->Block->getLocale('tieu_de_link', $data_extend)}{/if} <i class="fa-light fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    {/if}
                 </div>
                 
             </div>
