@@ -1,7 +1,7 @@
 {strip}
 {if !empty($data_block)}
     <div class="box-contact-inbox">
-        <div class="row">
+        <div class="row justify-content-between">
             <div class="col-lg-6 col-md-7 col-12">
                 <div class="info-left">
                     {if !empty($data_extend['locale'][{LANGUAGE}]['tieu_de'])}
@@ -22,7 +22,7 @@
             		        </p>
         		        {/if}
         	        {/foreach}
-        	        <form nh-form-contact="M1R9BAU3QD" action="/contact/send-info" method="POST" autocomplete="off" class="form-contact-inbox">
+        	        <form nh-form-contact="JXGSR5NDMV" action="/contact/send-info" method="POST" autocomplete="off" class="form-contact-inbox">
                         <div class="form-group mb-0">
                             <input required data-msg="{__d('template', 'vui_long_nhap_thong_tin')}" 
                                 data-rule-maxlength="255" data-msg-maxlength="{__d('template', 'thong_tin_nhap_qua_dai')}" 

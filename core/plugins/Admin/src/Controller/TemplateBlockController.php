@@ -100,6 +100,7 @@ class TemplateBlockController extends AppController {
                 COMMENT => __d('admin', 'binh_luan'),
                 AUTHOR => __d('admin', 'danh_sach_tac_gia'),
                 AUTHOR_DETAIL => __d('admin', 'chi_tiet_tac_gia'),
+                FAQ => __d('admin', 'Danh sách Faq'),
             ];
 
             foreach ($block as $k => $item) {

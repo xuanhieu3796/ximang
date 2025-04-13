@@ -154,11 +154,121 @@ class BlockComponent extends Component
             case WHEEL:
                 $result = $this->blockDetailWheel($block_info, $params_url_filter);
                 break;
+            case FAQ:
+                $result = $this->blockListfaqs($block_info, $params_url_filter);
+                break;
         }
 
         if($use_cache){
             Cache::write($cache_key, $result, DATA_BLOCK);
         }
+
+        return $result;
+    }
+
+    private function blockListfaqs($block_info = [], $params_url_filter = [])
+    {
+        $result = [
+            DATA => [],
+            PAGINATION => []
+        ];
+
+        $table = TableRegistry::get('Faqs');
+        $config = !empty($block_info['config']) ? $block_info['config'] : [];
+
+        // filter data block by config block
+        $ids = !empty($config['data_ids']) ? $config['data_ids'] : [];
+        $data_type = !empty($config['data_type']) ? $config['data_type'] : null;
+        $number_record = !empty($config[NUMBER_RECORD]) ? intval($config[NUMBER_RECORD]) : 12;
+        $has_pagination = !empty($config[HAS_PAGINATION]) ? true : false;
+
+        $sort_field = !empty($config[SORT_FIELD]) ? $config[SORT_FIELD] : null;
+        $sort_type = !empty($config[SORT_TYPE]) ? $config[SORT_TYPE] : null;
+
+        $filter_data = !empty($config['filter_data']) ? $config['filter_data'] : null;
+        $page = 1;
+        
+        // set params filter default
+        $params = [
+            SORT => [
+                FIELD => $sort_field,
+                SORT => $sort_type
+            ],
+            FILTER => [
+                LANG => LANGUAGE,
+                STATUS => 1,
+            ]
+        ];
+
+        if($has_pagination) {
+            // lay du lieu theo param tu duong dan
+            $params_url = $this->controller->getRequest()->getQueryParams();
+
+            // neu $params_url_filter co gia tri thi thay the param duong dan bang $params_url_filter
+            if(!empty($params_url_filter)){
+                $params_url = $params_url_filter;
+            }
+
+            if(!empty($params_url['limit'])){
+                $number_record = intval($params_url['limit']);
+            }
+            
+            if(!empty($params_url['page'])){
+                $page = intval($params_url['page']);
+            }
+
+            if(!empty($params_url[KEYWORD])){
+                $params[FILTER][KEYWORD] = trim($params_url[KEYWORD]);
+            }
+
+            if(!empty($params_url['sort'])){
+                $sort_param = explode('-', $params_url['sort']);
+                $sort_field = !empty($sort_param[0]) ? $sort_param[0] : null;
+                $sort_type = !empty($sort_param[1]) ? $sort_param[1] : null;
+
+                $params[SORT] = [
+                    FIELD => $sort_field,
+                    SORT => !empty($sort_type) ? $sort_type : DESC
+                ];
+            }                    
+        }
+        
+        $data = $pagination = [];
+        if(!$has_pagination){
+            $faqs = $table->queryListFaqs($params)->limit($number_record)->toArray();
+        }else{
+            try {
+                
+                $faqs = $this->PaginatorExtend->paginate($table->queryListFaqs($params), [
+                    'limit' => $number_record,
+                    'page' => $page
+                ])->toArray();
+            } catch (Exception $e) {
+                $faqs = $this->PaginatorExtend->paginate($table->queryListFaqs($params), [
+                    'limit' => $number_record,
+                    'page' => 1
+                ])->toArray();
+            }
+
+            // pagination info
+            $pagination_info = !empty($this->controller->getRequest()->getAttribute('paging')['Faqs']) ? $this->controller->getRequest()->getAttribute('paging')['Faqs'] : [];
+            $pagination = $this->Utilities->formatPaginationInfo($pagination_info);       
+        } 
+        if (!empty($faqs)) {
+            foreach ($faqs as $key => $faq) {
+                $faqs[$key] = [
+                    'id' => !empty($faq['id']) ? intval($faq['id']) : null,
+                    'name' => !empty($faq['name']) ? $faq['name'] : null,
+                    'position' => !empty($faq['position']) ? intval($faq['position']) : 1,
+                    'content' => !empty($faq['content']) ? $faq['content'] : null,
+                    'created' => !empty($faq['created']) ? $faq['created'] : null,
+                    'featured' => !empty($faq['featured']) ? $faq['featured'] : null,
+                    'updated' => !empty($faq['updated']) ? $faq['updated'] : null,
+                ];
+            }
+        }
+        $result[DATA] = $faqs;
+        $result[PAGINATION] = !empty($faqs) && !empty($pagination) ? $pagination : [];
 
         return $result;
     }

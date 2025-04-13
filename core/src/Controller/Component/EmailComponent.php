@@ -74,6 +74,7 @@ class EmailComponent extends Component
         $to_email = !empty($params['to_email']) ? $params['to_email'] : null;
         $send_try_content = !empty($params['send_try_content']) ? true : false;
         $generate_token = !empty($params['generate_token']) ? $params['generate_token'] : null;
+        $cc_email = !empty($params['cc_email']) ? $params['cc_email'] : null;
 
         $from_website_template = !empty($params['from_website_template']) ? true : false;
 
@@ -111,8 +112,10 @@ class EmailComponent extends Component
             $template_email = TableRegistry::get('EmailTemplates')->getEmailTemplateBycode($code);
             $title_email = !empty($template_email['title_email']) ? $template_email['title_email'] : null;
             $view = !empty($template_email['template']) ? $template_email['template'] : null;
+            if(empty($cc_email)){
+                $cc_email = !empty($template_email['cc_email']) ? explode(', ', $template_email['cc_email']) : null;
+            }
 
-            $cc_email = !empty($template_email['cc_email']) ? explode(', ', $template_email['cc_email']) : null;
             $bcc_email = !empty($template_email['bcc_email']) ? explode(', ', $template_email['bcc_email']) : null;
             
             if(empty($view)){
@@ -139,8 +142,6 @@ class EmailComponent extends Component
                 }
             }
         }
-        
-        
 
         $smtp_host = !empty($config['smtp_host']) ? $config['smtp_host'] : null;
         $smtp = !empty($config['smtp']) ? $config['smtp'] : null;
@@ -207,7 +208,7 @@ class EmailComponent extends Component
                 $mailer->addBcc($bcc_email);
             }
             
-            $mailer->setFrom($from_email, !empty($website_info['website_name']) ? $website_info['website_name'] : 'Web4s.vn');
+            $mailer->setFrom($from_email, !empty($website_info['website_name']) ? $website_info['website_name'] : 'Ximang.vn');
             $mailer->setSubject($title_email);
             $mailer->setEmailFormat('html');
 
@@ -224,8 +225,9 @@ class EmailComponent extends Component
                     'id_record' => $id_record,
                     'token' => $token
                 ]);
-
+                
                 $mailer->deliver();
+                
             }
 
             return $this->System->getResponse([CODE=> SUCCESS, MESSAGE => 'Gửi email thành công']);

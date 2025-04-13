@@ -428,3 +428,4 @@ define('IN_PROGRESS', 'in_progress');
 define('WAITING_CUSTOMER', 'waiting_customer');
 define('RESOLVED', 'resolved');
 define('CLOSED', 'closed');
+define('FAQ', 'faq');

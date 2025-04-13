@@ -32,6 +32,9 @@ class TemplateAdminHelper extends Helper
                 AUTHOR => __d('admin', 'danh_sach_tac_gia'),
                 AUTHOR_DETAIL => __d('admin', 'chi_tiet_tac_gia'),
             ],
+            __d('admin', 'Faq') => [
+                FAQ => __d('admin', 'Danh sách Faq')
+            ],
             __d('admin', 'he_thong') => [ 
                 MENU => 'MENU',
                 HTML => 'HTML',
@@ -62,7 +65,8 @@ class TemplateAdminHelper extends Helper
             PRODUCT_DETAIL => __d('admin', 'chi_tiet_san_pham'),
             ARTICLE_DETAIL => __d('admin', 'chi_tiet_bai_viet'),
             AUTHOR => __d('admin', 'danh_sach_tac_gia'),
-            AUTHOR_DETAIL => __d('admin', 'chi_tiet_tac_gia')
+            AUTHOR_DETAIL => __d('admin', 'chi_tiet_tac_gia'),
+            FAQ => __d('admin', 'Danh sách Faq')
         ];
 
         $result[__d('admin', 'loai_trang_he_thong')] = [

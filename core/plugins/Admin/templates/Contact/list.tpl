@@ -36,18 +36,28 @@
 <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
     <div class="kt-portlet nh-portlet">
         <div class="kt-portlet__body">
-            <div class="kt-form" responsive-tab>
-                {assign var = list_form value = $this->ContactFormAdmin->getListForm()}
-                {if !empty($list_form)}
-                    {foreach from = $list_form key = key item = name}
-                        <li class="btn btn-sm btn-secondary {if !empty($form_id) && $form_id == $key}btn-primary{/if}" change-form data-id="{if !empty($key)}{$key}{/if}">
-                            {if !empty($name)}{$name}{/if}
-                        </li>
-                    {/foreach}
-                {else}
-                    <a class="btn btn-sm btn-primary" href="{ADMIN_PATH}contact/form/add">
-                        {__d('admin', 'them_form_lien_he')}
-                    </a>
+            <div class="d-flex justify-content-between">
+                <div class="kt-form" responsive-tab>
+                    {assign var = list_form value = $this->ContactFormAdmin->getListForm()}
+                    {if !empty($list_form)}
+                        {foreach from = $list_form key = key item = name}
+                            <li class="btn btn-sm btn-secondary {if !empty($form_id) && $form_id == $key}btn-primary{/if}" change-form data-id="{if !empty($key)}{$key}{/if}">
+                                {if !empty($name)}{$name}{/if}
+                            </li>
+                        {/foreach}
+                    {else}
+                        <a class="btn btn-sm btn-primary" href="{ADMIN_PATH}contact/form/add">
+                            {__d('admin', 'them_form_lien_he')}
+                        </a>
+                    {/if}
+                </div>
+                {if !empty($form_id) && $form_id ==3}
+                    <div class="item-right">
+                        <a href="javascript:;" class="btn btn-sm btn-success send-email-modal">
+                            <i class="la la-envelope"></i>
+                            Gửi Email
+                        </a>
+                    </div>
                 {/if}
             </div>
         </div>
@@ -171,3 +181,127 @@
 <script type="text/javascript">
     var fields = {if !empty($fields)}{$fields}{/if};    
 </script>
+
+<div id="send-mail-contact" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Gửi tin khách hàng
+                </h5>
+                <span class="close" data-dismiss="modal">
+                    <span aria-hidden="true" class="la la-remove"></span>
+                </span>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="title-check d-flex justify-content-between border-bottom pb-3 mb-4">
+                            <span class="font-weight-bold">
+                                Bài viết
+                            </span>
+                        </div>
+                        <div class="list-mail " >
+                            <div class="form-group">
+                                <label>
+                                    Tìm kiếm
+                                </label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="la la-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <input id="article-suggest" type="text" class="form-control form-control-sm" placeholder="Tìm kiếm bài viết">
+                                </div>
+                            </div>
+
+                            <div class="kt-separator kt-separator--space-lg kt-separator--border-dashed mt-10 mb-10"></div>
+
+                            <table nh-table="article-selected" class="table table-striped">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>
+                                            {__d('admin', 'tieu_de')}
+                                        </th>
+                                        <th class="w-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="no-record">
+                                        <td colspan="3" class="text-center">
+                                            <i class="fs-11">
+                                                {__d('admin', 'chua_co_thong_tin')}
+                                            </i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="title-check d-flex justify-content-between border-bottom pb-3 mb-4">
+                            <span class="font-weight-bold">
+                                Khách hàng
+                            </span>
+                            <label class="kt-checkbox kt-checkbox--success mb-0">
+                                <input name="all_email" type="checkbox"> Gửi tất cả khách hàng
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="list-mail" >
+                            <div class="form-group">
+                                <label>
+                                    Tìm kiếm
+                                </label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="la la-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <input id="email-suggest" type="text" class="form-control form-control-sm" placeholder="Tìm kiếm email khách hàng">
+                                </div>
+                            </div>
+
+                            <div class="kt-separator kt-separator--space-lg kt-separator--border-dashed mt-10 mb-10"></div>
+
+                            <table nh-table="customer-selected" class="table table-striped">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>
+                                            {__d('admin', 'Email')}
+                                        </th>
+                                        <th class="w-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="no-record">
+                                        <td colspan="3" class="text-center">
+                                            <i class="fs-11">
+                                                {__d('admin', 'chua_co_thong_tin')}
+                                            </i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+
+                
+            </div>
+
+            <div class="modal-footer">
+                <span nh-btn="send-email-contact" class="btn btn-sm btn-primary">
+                    Gửi mail
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

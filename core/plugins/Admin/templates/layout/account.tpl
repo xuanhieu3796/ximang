@@ -25,8 +25,8 @@
 				<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" style="background-color: #1b1b28;">
 					<div class="kt-grid__item kt-grid__item--fluid kt-login__wrapper">
 						<div class="kt-login__container">
-							<div class="kt-login__logo" style="margin-bottom: 30px;">
-								<img alt="Web4s" src="{ADMIN_PATH}/assets/media/logos/logo4s-01.svg" style="width: 250px;">
+							<div class="kt-login__logo" style="margin-bottom: 10px;font-size: 43px;font-weight: 700;color: #0033ff;line-height: 1.3;">
+								XIMANG
 							</div>
 							
 							{$this->fetch('content')}

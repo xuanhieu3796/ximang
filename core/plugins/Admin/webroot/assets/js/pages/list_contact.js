@@ -223,6 +223,7 @@ var nhListContact = function() {
 
 		    $('[change-form]').on('click', function() {
 		    	var form_id = $(this).data('id');
+
 		      	nhMain.callAjax({
 					url: adminPath + '/contact/list',
 					data: {
@@ -398,6 +399,8 @@ var responsiveTab = {
         	});
         }
 	},
+
+	
 	storeTabs: function(tabs, destination) {
         // measure width
         tabs.each(function() {
@@ -410,9 +413,163 @@ var responsiveTab = {
     }
 
 }
+var viewModalEmail = {
+	modalElement: $('#send-mail-contact'),
+	articleSelectedTableElement: $('[nh-table="article-selected"]'),
+	customerSelectedTableElement: $('[nh-table="customer-selected"]'),
+	init: function(){
+		var self = this;
 
+		if(self.modalElement.length == 0) return false;
+
+		self.event();
+	},
+	event: function () {
+		var self = this;
+		$(document).on('click', '.send-email-modal', function(e) {
+			e.preventDefault();
+
+			self.articleSelectedTableElement.find('tbody').html('');
+			self.customerSelectedTableElement.find('tbody').html('');
+			var noRecordHtml = `
+				<tr class="no-record">
+					<td colspan="3" class="text-center">
+                        <i class="fs-11">
+                            Chưa có thông tin
+                        </i>
+                    </td>
+                </tr>`;			
+			self.articleSelectedTableElement.find('tbody').append(noRecordHtml);
+			self.customerSelectedTableElement.find('tbody').append(noRecordHtml);
+
+			self.modalElement.modal('show');
+		});
+		self.modalElement.on('keyup keypress paste focus', 'input#article-suggest', function(e) {
+			nhMain.autoSuggest.basic({
+				inputSuggest: 'input#article-suggest',
+				url: adminPath + '/article/auto-suggest',
+			}, function(response){
+				var articleId = response.id || '';
+				var articleName = response.name || '';
+
+				if(self.articleSelectedTableElement.length == 0 || articleId == '' || articleName == '') return;
+				if(self.articleSelectedTableElement.find(`tr[data-id="${articleId}"]`).length > 0) return;
+
+				var rowHtml = `
+				<tr data-id="${articleId}">
+					<td>
+                        ${articleName}
+                    </td>
+                    <td class="text-center">
+                    	<div nh-btn="remove-article" class="kt-badge kt-badge--danger kt-badge--inline cursor-p">
+                            ${nhMain.getLabel('xoa')}
+                        </div>
+                    </td>
+                </tr>`;
+
+				self.articleSelectedTableElement.find('tbody').append(rowHtml);
+				self.articleSelectedTableElement.find('tbody tr.no-record').remove();
+			});
+			
+			if(e.type == 'focusin'){
+				inputElement.autocomplete('search', inputElement.val());
+			}
+		});
+
+		self.articleSelectedTableElement.on('click', '[nh-btn="remove-article"]', function(e) {
+			$(this).closest('tr').remove();
+		});
+
+
+		self.modalElement.on('keyup keypress paste focus', 'input#email-suggest', function(e) {
+			nhMain.autoSuggest.basic({
+				inputSuggest: 'input#email-suggest',
+				url: adminPath + '/contact/auto-suggest',
+			}, function(response){
+				var contactId = response.id || '';
+				var contactName = response.name || '';
+
+				if(self.customerSelectedTableElement.length == 0 || contactId == '' || contactName == '') return;
+				if(self.customerSelectedTableElement.find(`tr[data-id="${contactId}"]`).length > 0) return;
+
+				var rowHtml = `
+				<tr data-id="${contactId}" data-mail="${contactName}">
+					<td>
+                        ${contactName}
+                    </td>
+                    <td class="text-center">
+                    	<div nh-btn="remove-email" class="kt-badge kt-badge--danger kt-badge--inline cursor-p">
+                            ${nhMain.getLabel('xoa')}
+                        </div>
+                    </td>
+                </tr>`;
+
+				self.customerSelectedTableElement.find('tbody').append(rowHtml);
+				self.customerSelectedTableElement.find('tbody tr.no-record').remove();
+			});
+			
+			if(e.type == 'focusin'){
+				inputElement.autocomplete('search', inputElement.val());
+			}
+		});
+
+		self.articleSelectedTableElement.on('click', '[nh-btn="remove-article"]', function(e) {
+			$(this).closest('tr').remove();
+		});
+
+		self.customerSelectedTableElement.on('click', '[nh-btn="remove-email"]', function(e) {
+			$(this).closest('tr').remove();
+		});
+
+		$(document).on('click', '[nh-btn="send-email-contact"]', function() {
+
+			var articleIds = [];
+			self.articleSelectedTableElement.find('tbody tr').each(function(index, input) {
+				var articleId = $(this).attr('data-id') || '';
+				if(articleId == '') return;
+
+				articleIds.push(articleId);
+			});
+
+			var emails = [];
+			self.customerSelectedTableElement.find('tbody tr').each(function(index, input) {
+				var email = $(this).attr('data-mail') || '';
+				if(email == '') return;
+
+				emails.push(email);
+			});
+
+			var allEmail = $('[name="all_email"]').is(':checked');
+
+		    KTApp.blockPage(blockOptions);
+		    nhMain.callAjax({
+				url: adminPath + "/contact/article/send-email",
+				data:{
+					articleIds: articleIds,
+					emails: emails,
+					allEmail: allEmail
+				}
+			}).done(function(response) {
+				KTApp.unblockPage();
+
+				var code = typeof(response.code) != _UNDEFINED ? response.code : _ERROR;
+			    var message = typeof(response.message) != _UNDEFINED ? response.message : '';
+
+			    if (code == _SUCCESS) {
+	            	toastr.info(message);
+	            	callback(response);
+	            } else {
+	            	toastr.error(message);
+	            }            
+			})
+			return false;
+		});
+	},
+
+}
 jQuery(document).ready(function() {
 	viewModalDetail.init();
+	viewModalEmail.init();
 	responsiveTab.init();
 	nhListContact.listData();
 });

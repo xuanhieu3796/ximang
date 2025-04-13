@@ -58,19 +58,6 @@
 		</div>
 		
 
-		<ul class="kt-sticky-toolbar">
-			<li class="kt-sticky-toolbar__item kt-sticky-toolbar__item--brand" data-toggle="kt-tooltip" title="" data-placement="left" data-original-title="{__d('admin', 'gui_yeu_cau')}">
-				<a href="{ADMIN_PATH}/feedback">
-					<i class="flaticon2-telegram-logo"></i>
-				</a>
-			</li>
-			<li class="kt-sticky-toolbar__item kt-sticky-toolbar__item--danger" id="kt_sticky_toolbar_chat_toggler" data-toggle="kt-tooltip" title="" data-placement="left" data-original-title="{__d('admin', 'hotline_ho_tro')}: 1900 6680">
-				<a href="tel:19006680">
-					<i class="flaticon2-phone"></i>
-				</a>
-			</li>
-		</ul>
-
 		<script type="text/javascript">
 			var adminPath = '{ADMIN_PATH}';	
 			var cdnUrl = '{CDN_URL}';

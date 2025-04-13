@@ -1,7 +1,7 @@
 <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
 	<div class="kt-header-mobile__logo">
-		<a href="/">
-			<img alt="Web4s" src="{ADMIN_PATH}/assets/media/logos/logo4s-02.svg" style="width:100px;" />
+		<a href="/" style="display: inline-block;font-size: 25px;font-weight: 700;color: #fff;">
+			XIMANG
 		</a>
 		<i class="fs-11 text-muted pt-5 pl-5">
 			Version {ADMIN_VERSION_UPDATE}

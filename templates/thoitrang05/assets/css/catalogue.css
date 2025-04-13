@@ -142,13 +142,7 @@ nav[nh-table-content="nav"] > .table-content {
   .box-table-fixed {
     right: calc(50% - 62rem); }
   .table-content-icon {
-    right: calc(50% - 62rem); } }
-article.article-detail .article-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-}
-
+    right: calc(50% - 62rem); } 
 article.article-detail-top {
     margin-bottom: 25px;
 }

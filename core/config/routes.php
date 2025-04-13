@@ -489,6 +489,21 @@ $routes->scope(ADMIN_PATH, function (RouteBuilder $builder) {
     $builder->connect('/tag/delete', ['plugin' => 'Admin', 'controller' => 'Tag', 'action' => 'delete']);
     $builder->connect('/tag/auto-suggest', ['plugin' => 'Admin', 'controller' => 'Tag', 'action' => 'autoSuggest']);
 
+
+     // Faqs
+    $builder->connect('/faq', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'list']);
+    $builder->connect('/faq/list', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'list']);
+    $builder->connect('/faq/list/json', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'listJson']);
+
+    $builder->connect('/faq/add', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'add']);
+    $builder->connect('/faq/update/:id', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'update'], ['pass' => ['id'], 'id' => '[0-9]+']);
+
+    $builder->connect('/faq/save', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'save']);
+    $builder->connect('/faq/save/:id', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'save'], ['pass' => ['id'], 'id' => '[0-9]+']);
+    $builder->connect('/faq/delete', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'delete']);
+    $builder->connect('/faq/change-status', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'changeStatus']);
+    $builder->connect('/faq/change-position', ['plugin' => 'Admin', 'controller' => 'Faq', 'action' => 'changePosition']);
+
     //Link 
     $builder->connect('/link', ['plugin' => 'Admin', 'controller' => 'Link', 'action' => 'list']);
     $builder->connect('/link/list', ['plugin' => 'Admin', 'controller' => 'Link', 'action' => 'list']);
@@ -1244,6 +1259,8 @@ $routes->scope(ADMIN_PATH, function (RouteBuilder $builder) {
     $builder->connect('/contact/detail/:id', ['plugin' => 'Admin', 'controller' => 'Contact', 'action' => 'detail'], ['pass' => ['id'], 'id' => '[0-9]+']);
     $builder->connect('/contact/change-status', ['plugin' => 'Admin', 'controller' => 'Contact', 'action' => 'changeStatus']);
     $builder->connect('/contact/delete', ['plugin' => 'Admin', 'controller' => 'Contact', 'action' => 'delete']);
+    $builder->connect('/contact/auto-suggest', ['plugin' => 'Admin', 'controller' => 'Contact', 'action' => 'autoSuggest']);
+    $builder->connect('/contact/article/send-email', ['plugin' => 'Admin', 'controller' => 'Contact', 'action' => 'sendEmail']);
 
     //contact form
     $builder->connect('/contact/form', ['plugin' => 'Admin', 'controller' => 'ContactForm', 'action' => 'list']);

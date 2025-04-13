@@ -386,7 +386,28 @@ function getOptionsDataTable()
 			sortable: true,
 			textAlign: 'center',
 			width: 90,		
-		},		
+		},	
+		{
+			field: 'send_email_status',
+			title: nhMain.getLabel('trang_thai_gui_email'),
+			width: 110,
+			autoHide: false,
+			textAlign: 'center',
+			template: function(row) {
+				var send_email_status = '';
+				var statusSendEmailOptions = {
+					2: {'title': nhMain.getLabel('khong_duoc_gui'), 'class': 'kt-badge--unified-dark kt-font-bold'},
+					1: {'title': nhMain.getLabel('da_gui'), 'class': 'kt-badge--unified-success kt-font-bold'},
+					0: {'title': nhMain.getLabel('chua_gui'), 'class': 'kt-badge--unified-warning kt-font-bold'}
+				};
+
+				if(KTUtil.isset(row, 'send_email_status') && row.send_email_status != null){
+					send_email_status = '<span class="kt-badge ' + statusSendEmailOptions[row.send_email_status].class + ' kt-badge--inline kt-badge--pill">' + statusSendEmailOptions[row.send_email_status].title + '</span>';
+				}
+
+				return send_email_status;
+			},
+		},
 		{
 			field: 'status',
 			title: `<span>${nhMain.getLabel('trang_thai')} <span nh-btn="setting-field-view" class="fa fa-cog fs-13  ml-3 "> </span><span>` ,

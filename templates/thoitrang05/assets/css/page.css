@@ -919,7 +919,7 @@ label {
   margin-bottom: 0;
   background: #fff;
   padding: 15px;
-  border-radius: 12px;
+  border-radius: 8px;
   }
   .pagination .page-item {
     border-left: 1px solid var(--light);

@@ -48,7 +48,16 @@ class ContactController extends AppController {
             ]);
         }
 
-        $this->js_page = '/assets/js/pages/list_contact.js';
+        $this->css_page = [
+            '/assets/plugins/custom/jquery-ui/jquery-ui.bundle.css'
+        ];
+
+        $this->js_page = [
+            '/assets/plugins/custom/tinymce6/tinymce.min.js',            
+            '/assets/plugins/custom/jquery-ui/jquery-ui.bundle.js',
+            '/assets/js/seo_analysis.js',
+            '/assets/js/pages/list_contact.js'
+        ];
 
         $this->set('fields', json_encode($fields));
         $this->set('form_id', $id);
@@ -382,6 +391,149 @@ class ContactController extends AppController {
             ]
         ]);
 
+    }
+
+    public function autoSuggest()
+    {
+        if (!$this->getRequest()->is('post')) {
+            $this->responseJson([MESSAGE => __d('admin', 'du_lieu_khong_hop_le')]);
+        }
+
+        $table = TableRegistry::get('Contacts');
+        $data = !empty($this->request->getData()) ? $this->request->getData() : [];
+
+        $filter = !empty($data[FILTER]) ? $data[FILTER] : [];
+        $filter[LANG] = $this->lang;
+        $filter['form_id'] = 3;
+
+        $contacts = $table->queryListContacts([
+            FILTER => $filter,
+            FIELD => FULL_INFO
+        ])->limit(10)->toArray();
+
+        $result = [];
+        if(!empty($contacts)){
+            foreach ($contacts as $k => $contact) {
+                $id = !empty($contact['id']) ? intval($contact['id']) : null;
+                $form_id = !empty($contact['form_id']) ? intval($contact['form_id']) : null;
+                $value = !empty($contact['value']) ? json_decode($contact['value'], true) : [];
+                $email = !empty($value['email']) ? $value['email'] : null;
+                $result[$k] = [
+                    'id' => $id,
+                    'form_id' => $form_id,
+                    'name' => $email
+                ];
+            }
+        }
+        $this->responseJson([
+            CODE => SUCCESS,
+            MESSAGE => __d('admin', 'xu_ly_du_lieu_thanh_cong'),
+            DATA => $result, 
+        ]);
+    }
+
+    public function sendEmail()
+    {
+        $this->layout = false;
+        $this->autoRender = false;
+
+        $data = $this->getRequest()->getData();
+
+        $articles = !empty($data['articleIds']) ? $data['articleIds'] : [];
+        $list_email = !empty($data['emails']) ? $data['emails'] : [];
+        $all_email = !empty($data['allEmail']) ? $data['allEmail'] : false;
+
+        if (!$this->getRequest()->is('post')) {
+            $this->responseJson([MESSAGE => __d('admin', 'phuong_thuc_khong_hop_le')]);
+        }
+
+        if (empty($articles) || !is_array($articles)) {
+            $this->responseJson([MESSAGE => __d('admin', 'Vui lòng chọn bài viết')]);
+        }
+        if (empty($list_email) && ($all_email == false)) {
+            $this->responseJson([MESSAGE => __d('admin', 'Vui lòng chọn email')]);
+        }
+
+        if (!empty($all_email) && $all_email == true) {
+            $filter['form_id'] = 3;
+            $table = TableRegistry::get('Contacts');
+            $contacts = $table->queryListContacts([
+                FILTER => $filter,
+                FIELD => FULL_INFO
+            ])->limit(10000)->toArray();
+
+            $result = [];
+            if(!empty($contacts)){
+                foreach ($contacts as $k => $contact) {
+                    $id = !empty($contact['id']) ? intval($contact['id']) : null;
+                    $form_id = !empty($contact['form_id']) ? intval($contact['form_id']) : null;
+                    $value = !empty($contact['value']) ? json_decode($contact['value'], true) : [];
+                    $email = !empty($value['email']) ? $value['email'] : null;
+                    $list_email[$k] = $email;
+                }
+            }
+            if (empty($list_email)) {
+                $this->responseJson([MESSAGE => __d('admin', 'Gửi email thành công')]);
+            }
+        }
+        $settings = TableRegistry::get('Settings')->getSettingWebsite();
+        $website_info = !empty($settings['website_info']) ? $settings['website_info'] : [];
+
+        $email = !empty($website_info['vi_email']) ?$website_info['vi_email'] : "xuanhieu3796@gmail.com";
+
+        $email = "xuanhieu3796@gmail.com";
+
+        $list_email = $list_email;
+        if(empty($list_email)){
+           return $this->System->getResponse([MESSAGE => __d('template', 'khong_lay_duoc_thong_tin_email_tai_khoan_khach_hang')]);
+        }
+
+        $conn = ConnectionManager::get('default');
+        try{
+            $conn->begin();
+
+            // params send email
+            $params = [
+                'to_email' => $email,
+                'code' => 'ARTICLE',
+                'id_record' => $articles,
+                'title_email' => 'BẢN TIN XI MĂNG VIỆT NAM',
+                'cc_email' => $list_email
+            ];
+
+            $send_email = $this->loadComponent('Email')->sendEmail($params);
+
+            if ($send_email[CODE] == ERROR) {
+                $this->System->getResponse([MESSAGE => !empty($send_email[MESSAGE]) ? $send_email[MESSAGE] : __d('template', 'gui_email_khong_thanh_cong')]);
+            }
+
+            $send_email_info[] = [
+                'cc_email' => $list_email,
+                'time' => time()
+            ];
+            $patch_data = [];
+            foreach ($articles as $k => $article_id) {
+                $patch_data[] = [
+                    'id' => $article_id,
+                    'send_email_status' => 1,
+                    'send_email_info' => json_encode($send_email_info),
+                ];
+            }
+
+            $entities = $table->patchEntities($articles, $patch_data, ['validate' => false]);
+            
+            $save = $table->saveMany($entities);
+            if (empty($save->id)){
+                throw new Exception();
+            }
+            
+            $conn->commit();
+            return $this->responseJson([CODE => SUCCESS]);
+
+        }catch (Exception $e) {
+            $conn->rollback();
+            return $this->responseJson([MESSAGE => $e->getMessage()]);
+        }
     }
 
 }
