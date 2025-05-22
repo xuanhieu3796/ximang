@@ -142,6 +142,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/member/wallet/ajax-buy-point', ['controller' => 'MemberWallet', 'action' => 'ajaxBuyPoint']);
     $builder->connect('/member/wallet/buy-point-success', ['controller' => 'MemberWallet', 'action' => 'buyPointSuccess']);
 
+    $builder->connect('/review/user', ['controller' => 'Review', 'action' => 'reviewUser']);
+    
     // customer point
     $builder->connect('/customer/point/apply-order', ['controller' => 'CustomerPoint', 'action' => 'applyPointToOrder']);
     $builder->connect('/customer/point/clear-in-order', ['controller' => 'CustomerPoint', 'action' => 'clearPointInOrder']);
@@ -475,6 +477,19 @@ $routes->scope(ADMIN_PATH, function (RouteBuilder $builder) {
     $builder->connect('/article/load-attribute-by-category', ['plugin' => 'Admin', 'controller' => 'Article', 'action' => 'loadAttributeByCategory']);
     
     $builder->connect('/article/rollback-log', ['plugin' => 'Admin', 'controller' => 'Article', 'action' => 'rollbackLog']);
+
+    // review
+    $builder->connect('/review', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'list']);
+    $builder->connect('/review/list', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'list']);
+    $builder->connect('/review/list/json', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'listJson']);
+    $builder->connect('/review/add', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'add']);
+    $builder->connect('/review/update/:id', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'update'], ['pass' => ['id'], 'id' => '[0-9]+']);
+
+    $builder->connect('/review/save', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'save']);
+    $builder->connect('/review/save/:id', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'save'], ['pass' => ['id'], 'id' => '[0-9]+']);
+    $builder->connect('/review/delete', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'delete']);
+    $builder->connect('/review/change-status', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'changeStatus']);
+    $builder->connect('/review/change-position', ['plugin' => 'Admin', 'controller' => 'Review', 'action' => 'changePosition']);
 
     // tags
     $builder->connect('/tag', ['plugin' => 'Admin', 'controller' => 'Tag', 'action' => 'list']);

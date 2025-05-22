@@ -41,7 +41,8 @@
 	"/templates/{CODE_TEMPLATE}/assets/js/compare.js",
 	"/templates/{CODE_TEMPLATE}/assets/js/member.js",
 	"/templates/{CODE_TEMPLATE}/assets/js/contact.js",
-	"/templates/{CODE_TEMPLATE}/assets/js/custom.js"
+	"/templates/{CODE_TEMPLATE}/assets/js/custom.js",
+	"/templates/{CODE_TEMPLATE}/assets/js/review.js"
 ], 'js')}
 
 {if PAGE_TYPE != 'home'}
