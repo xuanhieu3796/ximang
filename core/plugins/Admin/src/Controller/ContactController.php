@@ -502,6 +502,7 @@ class ContactController extends AppController {
             ];
 
             $send_email = $this->loadComponent('Email')->sendEmail($params);
+            
 
             if ($send_email[CODE] == ERROR) {
                 $this->System->getResponse([MESSAGE => !empty($send_email[MESSAGE]) ? $send_email[MESSAGE] : __d('template', 'gui_email_khong_thanh_cong')]);

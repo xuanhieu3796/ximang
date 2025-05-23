@@ -52,7 +52,7 @@ class ReviewController extends AppController
     }
 
 
-    public function reviewUser() 
+    public function sendInfo() 
     {
         $this->layout = false;
         $this->autoRender = false;
@@ -62,8 +62,43 @@ class ReviewController extends AppController
             $this->responseJson([MESSAGE => __d('template', 'du_lieu_khong_hop_le')]);
         }
 
-        debug($data);
-        die();
+        $id = !empty($data['id']) ? intval($data['id']) : null;
+
+        if (empty($id)) {
+            return $this->System->getResponse([MESSAGE => __d('template', 'du_lieu_khong_hop_le')]);
+        }
+
+        $table = TableRegistry::get('Reviews');
+
+        $review = $table->find()->where([
+            'id' => $id
+        ])->select(['id', 'number'])->first();
+        
+        if(empty($review)){
+            return $this->System->getResponse([MESSAGE => __d('template', 'Không tìm thấy thông tin đánh giá')]);
+        }
+        $number = !empty($review['number']) ? intval($review['number']) : 0;
+
+        $number_vote = $number + 1;
+
+        $entity = $table->patchEntity($review, ['number' => $number_vote]);
+
+        $conn = ConnectionManager::get('default');
+        try{
+            $conn->begin();
+
+            $save = $table->save($entity);
+            if (empty($save)){
+                throw new Exception();
+            }
+            
+            $conn->commit();
+            $this->responseJson([CODE => SUCCESS, MESSAGE => __d('template', 'Cảm ơn bạn đã đánh giá sản phẩm')]);
+
+        }catch (Exception $e) {
+            $conn->rollback();
+            $this->responseJson([MESSAGE => $e->getMessage()]);  
+        }
     }
 
     
