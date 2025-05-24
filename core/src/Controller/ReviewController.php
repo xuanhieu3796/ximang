@@ -15,44 +15,7 @@ use App\Lib\SignIn\SignInWithApple;
 
 class ReviewController extends AppController 
 {
-    public function beforeFilter(EventInterface $event)
-    {
-        parent::beforeFilter($event);
-        $action_check = [
-            'reviewUser', 
-        ];
-
-        $session = $this->request->getSession();  
-        $member = $session->read(MEMBER);
-
-        if(in_array($this->request->getParam('action'), $action_check) && !empty($member['customer_id'])) {
-            if($this->loadComponent('Member')->memberDoesntExistLogout($member['customer_id'])){
-                if($this->request->is('ajax')){
-                    $this->responseJson([
-                        STATUS => 403,
-                        MESSAGE => __d('template', 'het_phien_lam_viec_vui_long_dang_nhap_lai_tai_khoan')
-                    ]);
-                }else{
-                    return $this->redirect('/member/login?redirect=' . urlencode($this->request->getPath()), 303);
-                }
-            }
-        }
-
-        if (in_array($this->request->getParam('action'), $action_check) && empty($member['customer_id'])){
-            if($this->request->is('ajax')){
-                $this->responseJson([
-                    STATUS => 403,
-                    MESSAGE => __d('template', 'het_phien_lam_viec_vui_long_dang_nhap_lai_tai_khoan')
-                ]);
-            }else{
-                return $this->redirect('/member/login?redirect=' . urlencode($this->request->getPath()), 303);
-            }
-        }
-
-    }
-
-
-    public function sendInfo() 
+    public function send() 
     {
         $this->layout = false;
         $this->autoRender = false;
@@ -93,7 +56,7 @@ class ReviewController extends AppController
             }
             
             $conn->commit();
-            $this->responseJson([CODE => SUCCESS, MESSAGE => __d('template', 'Cảm ơn bạn đã đánh giá sản phẩm')]);
+            $this->responseJson([CODE => SUCCESS, MESSAGE => __d('template', 'Cảm ơn bạn đã ý kiến của bạn')]);
 
         }catch (Exception $e) {
             $conn->rollback();
@@ -101,6 +64,32 @@ class ReviewController extends AppController
         }
     }
 
+    public function detail() 
+    {
+        $this->viewBuilder()->enableAutoLayout(false);
+        $table = TableRegistry::get('Reviews');
+
+        $list_review = $table->queryListReviews()->toArray();
+        
+        if(empty($list_review)){
+            return $this->System->getResponse([MESSAGE => __d('template', 'Không tìm thấy thông tin đánh giá')]);
+        }
+        $total = array_sum(array_column($list_review, 'number'));
+        $result = [];
+
+        foreach($list_review as $key => $review){
+            $percent = $total > 0 ? round($review['number'] / $total * 100, 2) : 0;
+            if (empty($review['name'])) continue;
+            $result[$key] = [
+                'name' => !empty($review['name']) ? $review['name'] : null,
+                'number' => !empty($review['number']) ? $review['number'] : 0,
+                'percent' => $percent
+            ];
+        }
+
+        $this->set('list_review', $result);
+        $this->render('detail');
+    }
     
 
 }

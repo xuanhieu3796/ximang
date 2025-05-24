@@ -86,6 +86,7 @@ class ReviewsTable extends AppTable
         return $table->find()->where($where)->select($fields)->order($sort_string);
     }
 
+
     public function getDetailReview($id = null)
     {
         $result = [];
@@ -95,7 +96,7 @@ class ReviewsTable extends AppTable
         ->where([
             'Reviews.id' => $id
         ])->first();
-
+            
         return $result;
     }
 }

@@ -1633,3 +1633,61 @@ form.box-suggest .input-group .form-control {
         margin-bottom: 30px;
     }
 }
+
+.review-detail .item-review {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.review-detail .item-review .item-name {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.review-detail .item-review .progress {
+    height: 18px;
+    background: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.review-detail .item-review .progress .progress-bar {
+    background: var(--color-highlight);
+    height: 18px;
+}
+
+.review-detail .item-review .item-name span.percent-number {
+    color: red;
+}
+
+
+div#modal-detail-review .modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+div#modal-detail-review .modal-content .modal-header {
+    border: 0;
+    padding: 15px;
+    background: #ddd;
+}
+
+div#modal-detail-review .modal-content .modal-body {
+    padding: 15px;
+}
+
+
+div#modal-detail-review .modal-content .top .modal-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.review-detail .item-review:last-child {
+    margin-bottom: 0;
+}
+
+div#modal-detail-review .modal-content .modal-header button.close {
+    color: red;
+    font-size: 25px;
+}

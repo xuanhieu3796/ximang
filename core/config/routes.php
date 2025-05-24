@@ -142,7 +142,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/member/wallet/ajax-buy-point', ['controller' => 'MemberWallet', 'action' => 'ajaxBuyPoint']);
     $builder->connect('/member/wallet/buy-point-success', ['controller' => 'MemberWallet', 'action' => 'buyPointSuccess']);
 
-    $builder->connect('/review/send-info', ['controller' => 'Review', 'action' => 'sendInfo']);
+    $builder->connect('/review/send', ['controller' => 'Review', 'action' => 'send']);
+    $builder->connect('/review/detail', ['controller' => 'Review', 'action' => 'detail']);
     
     // customer point
     $builder->connect('/customer/point/apply-order', ['controller' => 'CustomerPoint', 'action' => 'applyPointToOrder']);
