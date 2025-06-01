@@ -275,6 +275,7 @@
         </div>
     </div>
 
+
     <div class="col-lg-2 col-xl-2 col-12">
         <div class="form-group">
             <label class="mb-10">
@@ -316,6 +317,15 @@
             </div>
         </div>
     </div> 
+    <div class="col-lg-3 col-xl-3 col-12">
+        <div class="form-group">
+            <label>
+                Thời gian chờ đăng
+            </label>
+            <input name="time_post" value="{if !empty($article.time_post)}{$this->Utilities->convertIntgerToDateTimeString($article.time_post)}{/if}" class="form-control form-control-sm datetime-picker" type="text" >
+        </div>
+    </div>
+
     
 </div>
 

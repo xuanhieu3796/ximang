@@ -106,4 +106,21 @@ class ArticleHelper extends Helper
         }
         return $result;
     }
+
+
+    public function getArticlesSaved($id = [], $customer_id = null) 
+    {
+        $table = TableRegistry::get('SavedPosts');
+        $savedpost_info = $table->find()->where([
+            'customer_account_id' => $customer_id,
+            'record_id' => $id
+        ])->first();
+        
+        if(!empty($savedpost_info)){
+            $result = true;
+        } else {
+            $result = false;
+        }
+        return $result;
+    }
 }

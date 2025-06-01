@@ -73,6 +73,16 @@ var nhArticle = {
 			input: $('#url_video')
 		});
 
+		$('.datetime-picker').each(function() {
+			$(this).datetimepicker({
+				format: 'hh:ii - dd/mm/yyyy',
+				showMeridian: true,
+				todayHighlight: true,
+				autoclose: true,
+				startDate: new Date()
+			});
+		});
+
 		nhMain.selectMedia.file.init();
 		nhMain.tinyMce.simple();
 		nhMain.tinyMce.full(

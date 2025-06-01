@@ -7,12 +7,16 @@ var nhSavedPost = {
 		var accountInfo = typeof(nhMain.dataInit.member) != _UNDEFINED && !$.isEmptyObject(nhMain.dataInit.member) ? nhMain.dataInit.member : {};
 		self.accountId = typeof(accountInfo.account_id) != _UNDEFINED ? accountInfo.account_id : null;
 
-		// thêm bài viết yêu thích
+
 		$(document).on('click', '[nh-btn-action="savedpost"]:not(.added-savedpost)', function(e){
 			var recordID = nhMain.utilities.parseInt($(this).attr('savedpost-id'));
 
 			if(!nhMain.utilities.notEmpty(recordID)){
 				nhMain.showAlert(_ERROR, nhMain.getLabel('khong_lay_duoc_thong_tin_yeu_thich'));
+				return false;
+			}
+			if(!nhMain.utilities.notEmpty(self.accountId)) {
+				nhMain.showAlert(_ERROR, 'Bạn phải là thành viên mới được sử dụng chức năng này');
 				return false;
 			}
 
@@ -28,24 +32,25 @@ var nhSavedPost = {
 
 
 		// xóa bài viết yêu thích
-		$(document).on('click', '.added-wishlist[nh-btn-action="wishlist"]', function(e){
-			var recordID = nhMain.utilities.parseInt($(this).attr('wishlist-id'));
-			var type = $(this).attr('wishlist-type');
+		$(document).on('click', '.added-savedpost[nh-btn-action="savedpost"]', function(e){
+			var recordID = nhMain.utilities.parseInt($(this).attr('savedpost-id'));
 			var btn_delete = $(this);
 
-			if(!nhMain.utilities.notEmpty(recordID) || !nhMain.utilities.notEmpty(type)){
-				nhMain.showAlert(_ERROR, nhMain.getLabel('khong_lay_duoc_thong_tin_yeu_thich'));
+			if(!nhMain.utilities.notEmpty(recordID)){
+				nhMain.showAlert(_ERROR, nhMain.getLabel('Không lấy được thông tin bài viết đã lưu'));
 				return false;
 			}
 
-			self.messages = nhMain.getLabel('ban_co_muon_xoa_san_pham_yeu_thich_nay');
-			if(type == _ARTICLE) {
-				self.messages = nhMain.getLabel('ban_co_muon_xoa_bai_viet_yeu_thich_nay');
+			if(!nhMain.utilities.notEmpty(self.accountId)) {
+				nhMain.showAlert(_ERROR, 'Bạn phải là thành viên mới được sử dụng chức năng này');
+				return false;
 			}
 
+			self.messages = nhMain.getLabel('Bạn có muốn xóa bài viết đã lưu này');
+
 			nhMain.showAlert(_WARNING, self.messages, {callback_element:  $(this)}, function(e){
-				e.removeClass('added-wishlist');
-				self.remove(recordID, type, e);
+				e.removeClass('added-savedpost');
+				self.remove(recordID, e);
 			});
 		});
 
@@ -133,60 +138,31 @@ var nhSavedPost = {
 		}
 	},
 
-	remove: function(record_id = null, type = null, btn_delete = null) {
+	remove: function(record_id = null,  btn_delete = null) {
 		var self = this;
 
-		if(nhMain.utilities.notEmpty(self.accountId)) {
-			nhMain.callAjax({
-				async: true,
-				url: '/wishlist/remove-product',
-				data: {
-					account_id: self.accountId,
-					record_id: record_id,
-					type: type
-				},
-			}).done(function(response) {
-				var code = typeof(response.code) != _UNDEFINED ? response.code : _ERROR;
-	        	var message = typeof(response.message) != _UNDEFINED ? response.message : '';
-	        	var status = typeof(response.status) != _UNDEFINED ? response.status : {};
+		nhMain.callAjax({
+			async: true,
+			url: '/savedpost/remove-post',
+			data: {
+				account_id: self.accountId,
+				record_id: record_id,
+			},
+		}).done(function(response) {
+			var code = typeof(response.code) != _UNDEFINED ? response.code : _ERROR;
+			var message = typeof(response.message) != _UNDEFINED ? response.message : '';
+			var status = typeof(response.status) != _UNDEFINED ? response.status : {};
 
-	            if (code == _SUCCESS) {
-	            	nhMain.showAlert(_SUCCESS, message);
-	            	if(nhMain.utilities.notEmpty(btn_delete)) {
-	            		btn_delete.closest('[nh-wishlist="reload"]').remove();
-	            	}
-	            	self.reloadMiniWishlist(self.countTotal - 1);
-	            } else {
-	            	nhMain.showAlert(_ERROR, message);
-	            }
-			});
-
-		} else {
-			if(type == _PRODUCT) {
-				self.wishlistProduct.splice($.inArray(record_id, self.wishlistProduct), 1);
+			if (code == _SUCCESS) {
+				nhMain.showAlert(_SUCCESS, message);
+				if(nhMain.utilities.notEmpty(btn_delete)) {
+					btn_delete.closest('[nh-savedpost="reload"]').remove();
+				}
+				self.reloadMiniWishlist(self.countTotal - 1);
+			} else {
+				nhMain.showAlert(_ERROR, message);
 			}
-
-			if(type == _ARTICLE) {
-				self.wishlistArticle.splice($.inArray(record_id, self.wishlistArticle), 1);
-			}
-
-			self.wishlistCookie = {
-				product: self.wishlistProduct,
-				article: self.wishlistArticle
-			};
-
-			self.messages = nhMain.getLabel('xoa_thanh_cong_san_pham_yeu_thich');
-			if(type == _ARTICLE) {
-				self.messages = nhMain.getLabel('xoa_thanh_cong_bai_viet_yeu_thich');
-			}
-
-			$.cookie(_WISHLIST, JSON.stringify(self.wishlistCookie), {expires: self.expires_cookie, path: '/'});
-			if(nhMain.utilities.notEmpty(btn_delete)) {
-        		btn_delete.closest('[nh-wishlist="reload"]').remove();
-        	}
-			self.reloadMiniWishlist(self.countTotal - 1);
-			nhMain.showAlert(_SUCCESS, self.messages);
-		}
+		});
 	}
 }
 

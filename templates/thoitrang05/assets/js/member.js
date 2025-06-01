@@ -28,6 +28,7 @@ var nhMember = {
 		self.changePhone.init();
 		self.affiliate.init();
 		self.associateBank.init();
+		self.savedPost.init();
 	},
 	login: {
 		modalLogin: null,
@@ -2927,6 +2928,62 @@ var nhMember = {
 				bankSelect.val('');
 				bankSelect.selectpicker('render');
 			}
+		}
+	},
+	savedPost: {
+		formElement: $('[nh-form="list-saved-post"]'),
+		page: 1,
+		init: function(){
+			var self = this;
+			if(self.formElement.length == 0) return;
+			self.events();
+			self.search();
+		},
+		events: function(){
+			var self = this;
+
+			$(document).on('click', '[nh-btn-action="savedpost"]', function(e){
+				e.preventDefault();
+				self.page = 1;
+				self.search();
+				return false;
+			});
+
+			self.formElement.on('click', '[nh-btn="clear-filter"]', function(e){
+				self.formElement.find('input[name="keyword"]').val('');
+				self.formElement.find('input[nh-date]').val('');
+				self.formElement.find('select').val('').selectpicker('refresh');
+
+				self.page = 1;
+				self.search();
+				return false;
+			});
+
+			$(document).on('click', '.pagination .page-item:not(.disabled , .active) a', function(e){
+				e.preventDefault();
+				
+				self.page = parseInt($(this).attr('nh-page-redirect'));
+				self.search();
+				return false;
+			});
+
+			
+		},
+		search: function(){
+			var self = this;
+
+			nhMain.showLoading.page();
+			var formData = self.formElement.serialize();
+
+			formData = formData + '&page=' + self.page;
+			nhMain.callAjax({
+				url: '/member/ajax-list-saved-post',
+				data: formData,
+				dataType: 'html'
+			}).done(function(response) {
+				nhMain.showLoading.remove();
+				self.formElement.find('[nh-form="table-saved-post"]').html(response);
+			});
 		}
 	}
 }	

@@ -26,10 +26,8 @@ class SavedPostController extends AppController {
         $this->layout = false;
         $this->autoRender = false;
 
-        $data = $this->getRequest()->getData();
-        debug($data);
-        die();
-        if (!$this->controller->getRequest()->is('post') || empty($data)) {
+        $data = !empty($this->request->getData()) ? $this->request->getData() : [];
+        if (!$this->getRequest()->is('post') || empty($data)) {
             $this->responseJson([MESSAGE => __d('template', 'du_lieu_khong_hop_le')]);
         }
 
@@ -38,32 +36,38 @@ class SavedPostController extends AppController {
             $this->responseJson([MESSAGE => __d('template', 'du_lieu_khong_hop_le')]);
         }
 
+        $member_info = TableRegistry::get('Customers')->find()->where([
+            'id' => $this->customer_id
+        ])->first();
+        if(empty($member_info)){
+            return $this->responseJson([MESSAGE => __d('template', 'khong_lay_duoc_thong_tin_tai_khoan')]);
+        }
+
         $table = TableRegistry::get('SavedPosts');
-        $savedPost_info = $table->find()->where([
+        $article_info = $table->find()->where([
             'customer_account_id' => $this->customer_id
         ])->toArray();
-        debug($savedPost_info);
-        die();
-        $savedPost_ids = !empty($savedPost_info) ? Hash::extract($savedPost_info, '{n}.record_id') : [];
 
-        $data_savedPost = [];
-        if(!in_array($record_id, $savedPost_ids)) {
-            $data_savedPost[] = [
+        $article_ids = !empty($article_info) ? Hash::extract($article_info, '{n}.record_id') : [];
+        
+        $data_save = [];
+        if(!in_array($record_id, $article_ids)) {
+            $data_save[] = [
                 'customer_account_id' => $this->customer_id,
                 'record_id' => intval($record_id)
             ];
         } else {
             // nếu record id đã có trong list thì trả về kết quả luôn
-            return $this->System->getResponse([
+            return $this->responseJson([
                 CODE => SUCCESS,
-                MESSAGE => $messages
+                MESSAGE => __d('template', 'Lưu bài viết thành công')
             ]);
         }
 
-        if(empty($savedPost_info)) {
-            $data_save = $table->newEntities($data_savedPost);
+        if(empty($article_info)) {
+            $entity = $table->newEntities($data_save);
         } else {
-            $data_save = $table->patchEntities($savedPost_info, $data_savedPost);
+            $entity = $table->patchEntities($article_info, $data_save);
         }
         
         $conn = ConnectionManager::get('default');
@@ -71,7 +75,7 @@ class SavedPostController extends AppController {
             $conn->begin();
 
             // save data
-            $save = $table->saveMany($data_save);
+            $save = $table->saveMany($entity);
             
             if (empty($save)){
                 throw new Exception();
@@ -79,24 +83,64 @@ class SavedPostController extends AppController {
 
             $conn->commit();
 
-            return $this->System->getResponse([
+            return $this->responseJson([
                 CODE => SUCCESS,
-                MESSAGE => $messages
+                MESSAGE => __d('template', 'Lưu bài viết thành công')
             ]);
         }catch (Exception $e) {
             $conn->rollback();
-            return $this->System->getResponse([MESSAGE => $e->getMessage()]);
+            return $this->responseJson([MESSAGE => $e->getMessage()]);
         }
-        $this->responseJson($result);
     }
 
-    public function removeProduct()
+    public function removePost()
     {
         $this->layout = false;
         $this->autoRender = false;
 
-        $data = $this->getRequest()->getData();
-        $result = $this->loadComponent('SavedPosts')->removeProduct($data);
-        $this->responseJson($result);
+        $data = !empty($this->request->getData()) ? $this->request->getData() : [];
+        if (!$this->getRequest()->is('post') || empty($data)) {
+            $this->responseJson([MESSAGE => __d('template', 'du_lieu_khong_hop_le')]);
+        }
+
+        $record_id = !empty($data['record_id']) ? intval($data['record_id']) : [];
+        $member_info = TableRegistry::get('Customers')->find()->where([
+            'id' => $this->customer_id
+        ])->first();
+        if(empty($member_info)){
+            return $this->responseJson([MESSAGE => __d('template', 'khong_lay_duoc_thong_tin_tai_khoan')]);
+        }
+
+        $table = TableRegistry::get('SavedPosts');
+
+        $conn = ConnectionManager::get('default');
+        try{
+            $conn->begin();
+
+            $savedpost_info = $table->find()->where([
+                'customer_account_id' => $this->customer_id,
+                'record_id' => $record_id
+            ])->first();
+
+            if(empty($savedpost_info)){
+                return $this->responseJson([MESSAGE => __d('template', 'Không lấy được thông tin bài viết đã lưu')]);
+            }
+
+            $delete = $table->delete($savedpost_info);
+
+            if (empty($delete)){
+                throw new Exception();
+            }
+    
+            $conn->commit();
+
+            return $this->responseJson([
+                CODE => SUCCESS,
+                MESSAGE => __d('template', 'Xóa bài viết đã lưu thành công')
+            ]);
+        }catch (Exception $e) {
+            $conn->rollback();
+            return $this->responseJson([MESSAGE => $e->getMessage()]);
+        }
     }
 }

@@ -15,6 +15,7 @@ class SavedPostsTable extends Table
         $this->setTable('saved_posts');
         $this->setPrimaryKey('id');
 
+
     }
 
     public function validationDefault(Validator $validator): Validator

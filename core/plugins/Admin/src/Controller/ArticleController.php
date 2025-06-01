@@ -859,6 +859,12 @@ class ArticleController extends AppController {
             }
         }
         
+        $time_post = !empty($data['time_post']) ? TableRegistry::get('Utilities')->stringDateTimeClientToInt($data['time_post']) : null;
+        $time = 0;
+        if(!empty($time_post)){
+            $time = 1;
+        }
+        
         // kiểm tra duyệt bài
         $settings = TableRegistry::get('Settings')->getSettingWebsite();
         $approved_article = !empty($settings['approved_article']) ? $settings['approved_article'] : [];
@@ -887,7 +893,9 @@ class ArticleController extends AppController {
             'seo_score' => !empty($data['seo_score']) ? $data['seo_score'] : null,
             'keyword_score' => !empty($data['keyword_score']) ? $data['keyword_score'] : null,
             'draft' => $draft,
-            'status' => $status
+            'status' => $status,
+            'time_post' => $time_post,
+            'time' => $time
         ];
         
         // conver ảnh nội dung lên cdn

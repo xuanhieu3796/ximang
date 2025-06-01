@@ -34,6 +34,7 @@ class BlockComponent extends Component
             array_push($products_viewed, $page_record_id);
             $session->write('PRODUCTS_VIEWED', $products_viewed);
 
+            
             $table = TableRegistry::get('Products');
             $get_view = $table->find()->where(['id' => $page_record_id])->select(['view'])->first();
             $view = !empty($get_view['view']) ? intval($get_view['view']) : 0;
@@ -49,6 +50,16 @@ class BlockComponent extends Component
             if (in_array($page_record_id, $articles_viewed)) return;
             array_push($articles_viewed, $page_record_id);
             $session->write('ARTICLES_VIEWED', $articles_viewed);
+            $table = TableRegistry::get('Articles');
+
+            $table_view = TableRegistry::get('Views');
+            $data_save = [
+                'article_id' => $page_record_id
+            ];
+            // lưu dữ liệu vào db
+            $entity = $table_view->newEntity($data_save);
+            $save = $table_view->save($entity);
+
 
             $table = TableRegistry::get('Articles');
             $get_view = $table->find()->where(['id' => $page_record_id])->select(['view'])->first();
@@ -1186,11 +1197,33 @@ class BlockComponent extends Component
         }   
 
         if($data_type == ARTICLES_VIEWED){
-            $request = $this->controller->getRequest();
-            $article_viewed = !empty($request->getCookie(ARTICLES_VIEWED)) ? json_decode($request->getCookie(ARTICLES_VIEWED), true) : null;
-            if(empty($article_viewed)) return $result;
+            $table_view = TableRegistry::get('Views');
 
-            $params[FILTER]['ids'] = $article_viewed;
+            // Get views from last 15 days
+            $fifteen_days_ago = time() - (15 * 24 * 60 * 60);
+            $views_list = $table_view->find()
+                ->where(['created >=' => $fifteen_days_ago])
+                ->toArray();
+
+            if(empty($views_list)) return $result;
+
+            // Count occurrences of each article_id
+            $article_counts = [];
+            foreach($views_list as $view) {
+                $article_id = $view->article_id;
+                if(!isset($article_counts[$article_id])) {
+                    $article_counts[$article_id] = 0;
+                }
+                $article_counts[$article_id]++;
+            }
+
+            // Get article IDs
+            $article_ids = array_keys($article_counts);
+            
+
+            if(empty($article_ids)) return [];
+
+            $params[FILTER]['ids'] = $article_ids;
         }
 
         if(!empty($filter_data) && $filter_data == 'featured'){

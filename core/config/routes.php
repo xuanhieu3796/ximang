@@ -166,6 +166,13 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/wishlist/add-product', ['controller' => 'Wishlist', 'action' => 'addProduct']);
     $builder->connect('/wishlist/remove-product', ['controller' => 'Wishlist', 'action' => 'removeProduct']);
 
+    //savedpost
+    $builder->connect('/savedpost/add-post', ['controller' => 'SavedPost', 'action' => 'addPost']);
+    $builder->connect('/savedpost/remove-post', ['controller' => 'SavedPost', 'action' => 'removePost']);
+
+    $builder->connect('/member/list-saved-post', ['controller' => 'Member', 'action' => 'listSavedPost']);
+    $builder->connect('/member/ajax-list-saved-post', ['controller' => 'Member', 'action' => 'ajaxListSavedPost']);
+    
     //counter
     $builder->connect('/counter/close-brower', ['controller' => 'Counter', 'action' => 'checkCloseBrower']);
 

@@ -12,6 +12,7 @@ use Cake\Core\Configure;
 use Google;
 use Cake\Http\Client;
 use App\Lib\SignIn\SignInWithApple;
+use Cake\Utility\Hash;
 
 class MemberController extends AppController 
 {
@@ -47,7 +48,7 @@ class MemberController extends AppController
 
         $session = $this->request->getSession();  
         $member = $session->read(MEMBER);
-
+        $this->customer_id = !empty($member['customer_id']) ? intval($member['customer_id']) : null;
         if(in_array($this->request->getParam('action'), $action_check) && !empty($member['customer_id'])) {
             if($this->loadComponent('Member')->memberDoesntExistLogout($member['customer_id'])){
                 if($this->request->is('ajax')){
@@ -1103,6 +1104,92 @@ NEJSSvr+
         $apple_id = !empty($user_info['sub']) ? $user_info['sub'] : '';
 
         return $user_info;
+    }
+
+    public function listSavedPost() 
+    {
+        $this->set('title_for_layout', __d('template', 'Bài viết đã lưu của tôi'));
+    }
+
+    private function _convertDateTimeToTimestamp($date_string) 
+    {
+        if(empty($date_string)) return null;
+        
+        $datetime = \Cake\I18n\Time::createFromFormat('d/m/Y - H:i', $date_string);
+        return $datetime ? $datetime->timestamp : null;
+    }
+
+    public function ajaxListSavedPost() 
+    {   
+        $this->viewBuilder()->enableAutoLayout(false);
+
+        $data = !empty($this->request->getData()) ? $this->request->getData() : [];
+
+        $table = TableRegistry::get('SavedPosts');
+        $table_article = TableRegistry::get('Articles');
+        $limit = 10;
+        $page = !empty($data['page']) ? intval($data['page']) : 1;
+        $sort_field = !empty($config[SORT_FIELD]) ? $config[SORT_FIELD] : null;
+        $sort_type = !empty($config[SORT_TYPE]) ? $config[SORT_TYPE] : null;
+        $keyword = !empty($data['keyword']) ? $data['keyword'] : null;
+
+        // Convert time_post if exists
+        if(!empty($data['time_post'])) {
+            $time_post = $this->_convertDateTimeToTimestamp($data['time_post']);
+        }
+
+        $params = [
+            'get_categories' => true,
+            SORT => [
+                FIELD => $sort_field,
+                SORT => $sort_type
+            ],
+            FILTER => [
+                LANG => LANGUAGE,
+                STATUS => 1,
+                KEYWORD => $keyword
+            ]
+        ];
+
+        // Add time_post to filter if exists
+        if(!empty($time_post)) {
+            $params[FILTER]['time_post'] = $time_post;
+        }
+
+        $list_saved_post = $table->find()->where([
+            'customer_account_id'=> $this->customer_id
+        ])->toArray();
+
+        if(empty($list_saved_post)) return [];
+
+        $ids = Hash::extract($list_saved_post, '{n}.record_id');
+        $params[FILTER]['ids'] = $ids;
+       
+        try {
+            $articles = $this->paginate($table_article->queryListArticles($params), [
+                'limit' => $limit,
+                'page' => $page
+            ])->toArray();
+        } catch (Exception $e) {
+            $articles = $this->paginate($table_article->queryListArticles($params), [
+                'limit' => $limit,
+                'page' => $page
+            ])->toArray();
+        }
+        
+        $pagination = [];
+        $pagination_info = !empty($this->request->getAttribute('paging')['Articles']) ? $this->request->getAttribute('paging')['Articles'] : [];
+        $pagination = TableRegistry::get('Utilities')->formatPaginationInfo($pagination_info);
+        $result = [];
+        if(!empty($articles)){
+            foreach ($articles as $k => $article) {
+                $result[$k] = $table_article->formatDataArticleDetail($article, LANGUAGE);
+            }
+        }
+        $this->set('list_articles', $result);
+        $this->set('pagination', $pagination);
+        $this->set('title_for_layout', __d('template', 'Bài viết đã lưu của tôi'));
+        $this->render('element_list_articles');
     }
 
 }

@@ -449,6 +449,8 @@ class ArticlesTable extends AppTable
             'lang' => !empty($data['ArticlesContent']['lang']) ? $data['ArticlesContent']['lang'] : null,
             'url_id' => !empty($data['Links']['id']) ? intval($data['Links']['id']) : null,
             'url' => !empty($data['Links']['url']) ? $data['Links']['url'] : null,
+            'time_post' => !empty($data['time_post']) ? $data['time_post'] : null,
+            'time' => !empty($data['time']) ? $data['time'] : null,
         ];
         
         if(!empty($data['User'])){
