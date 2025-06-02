@@ -54,6 +54,7 @@ var nhArticle = {
 		self.initLib();
 		self.validation(); 
 		self.events();
+		
 	},
 	initLib: function(){
 		var self = this;
@@ -73,14 +74,14 @@ var nhArticle = {
 			input: $('#url_video')
 		});
 
-		$('.datetime-picker').each(function() {
-			$(this).datetimepicker({
-				format: 'hh:ii - dd/mm/yyyy',
-				showMeridian: true,
-				todayHighlight: true,
-				autoclose: true,
-				startDate: new Date()
-			});
+		nhMain.attributeInput.init();
+
+		$('.select-datetime').datetimepicker({
+			format: 'dd/mm/yyyy - hh:ii',
+			showMeridian: true,
+			todayHighlight: true,
+			autoclose: true,
+			pickerPosition: 'top-right'
 		});
 
 		nhMain.selectMedia.file.init();

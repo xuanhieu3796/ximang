@@ -22,6 +22,20 @@
 ]}
 {if !empty($article_info)}
 	<article class="article-detail article-detail-page bg-white">
+		<div>
+			<a nh-btn-action="wishlist" wishlist-id="{if !empty($article_info.id)}{$article_info.id}{/if}" wishlist-type="{ARTICLE}" class="btn-product-action" href="javascript:;" title="{__d('template', 'yeu_thich')}">
+				<i class="fa-light fa-heart"></i>
+			</a>
+		</div>
+
+		{assign var = member_info value = $this->Member->getMemberInfo()}
+		{if !empty($member_info)}
+			{assign var = is_saved value = $this->Article->getArticlesSaved({PAGE_RECORD_ID}, $member_info.id)}
+		{/if}
+
+        <a nh-btn-action="savedpost" savedpost-id="{if !empty($article_info.id)}{$article_info.id}{/if}" savedpost-type="{ARTICLE}" class="btn-product-action {if !empty($is_saved)}added-savedpost{/if}" href="javascript:;" title="{__d('template', 'yeu_thich')}">
+            <i class="fa-light fa-heart"></i>
+        </a>
 		{if !empty($article_info.name)}
 			<h1 class="title-detail">
 				{$article_info.name|escape}

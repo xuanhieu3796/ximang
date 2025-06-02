@@ -128,6 +128,7 @@ class ArticlesTable extends AppTable
         $get_attributes = !empty($params['get_attributes']) ? true : false;
         $get_empty_name = !empty($params['get_empty_name']) ? true : false;
         $get_tags = !empty($params['get_tags']) ? true : false;
+        $get_time_post = !empty($params['get_time_post']) ? true : false;
 
         // sort
         $sort = !empty($params[SORT]) ? $params[SORT] : [];
@@ -213,6 +214,13 @@ class ArticlesTable extends AppTable
 
         if(!empty($not_ids)){
             $where['Articles.id NOT IN'] = $not_ids;
+        }
+
+        if(!empty($get_time_post)){
+            $where['OR'] = [
+                'Articles.time_post IS NULL',
+                'Articles.time_post <=' => time()
+            ];
         }
 
         if(!empty($id_categories)){

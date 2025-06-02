@@ -1024,6 +1024,7 @@ class BlockComponent extends Component
         $params = [
             'get_categories' => true,
             'get_attributes' => true,
+            'get_time_post' => true,
             SORT => [
                 FIELD => $sort_field,
                 SORT => $sort_type
@@ -1097,6 +1098,8 @@ class BlockComponent extends Component
         if(!empty($data_type) && $data_type == BY_PAGE_ID && defined('PAGE_RECORD_ID') && defined('PAGE_TYPE') && PAGE_TYPE == ARTICLE){
             $params[FILTER]['id_categories'] = [PAGE_RECORD_ID];
         }
+
+        
 
         if($has_pagination) {
             $params_url = $this->controller->getRequest()->getQueryParams();
@@ -1203,10 +1206,12 @@ class BlockComponent extends Component
             $fifteen_days_ago = time() - (15 * 24 * 60 * 60);
             $views_list = $table_view->find()
                 ->where(['created >=' => $fifteen_days_ago])
+                ->group(['article_id'])
+                ->select(['article_id'])
                 ->toArray();
 
             if(empty($views_list)) return $result;
-
+            
             // Count occurrences of each article_id
             $article_counts = [];
             foreach($views_list as $view) {
@@ -1355,7 +1360,13 @@ class BlockComponent extends Component
             'get_categories' => true,
             'get_tags' => true,
             'get_attributes' => true,
-            'get_user' => true
+            'get_user' => true,
+            FILTER => [
+                'OR' => [
+                    ['time_post IS NULL'],
+                    ['time_post <=' => date('Y-m-d H:i:s')]
+                ]
+            ]
         ]);
 
         $data = [];

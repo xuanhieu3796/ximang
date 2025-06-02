@@ -322,7 +322,7 @@
             <label>
                 Thời gian chờ đăng
             </label>
-            <input name="time_post" value="{if !empty($article.time_post)}{$this->Utilities->convertIntgerToDateTimeString($article.time_post)}{/if}" class="form-control form-control-sm datetime-picker" type="text" >
+            <input name="time_post" value="{if !empty($article.time_post)}{date('d/m/Y - H:i', $article.time_post)}{/if}" class="form-control form-control-sm select-datetime" type="text" >
         </div>
     </div>
 

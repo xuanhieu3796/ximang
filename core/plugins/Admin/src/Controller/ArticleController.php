@@ -858,8 +858,13 @@ class ArticleController extends AppController {
                 ];
             }
         }
+
+        $time_post = time();
+        if (!empty($data['time_post'])) {
+            $time_post = str_replace('/', '-', str_replace(' - ', ' ', $data['time_post']));
+            $time_post = strtotime($time_post);
+        }
         
-        $time_post = !empty($data['time_post']) ? TableRegistry::get('Utilities')->stringDateTimeClientToInt($data['time_post']) : null;
         $time = 0;
         if(!empty($time_post)){
             $time = 1;
